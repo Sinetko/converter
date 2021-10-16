@@ -38,7 +38,6 @@ h1,h2,h3,h4,h5,h6 {font-size: inherit; font-weight: 400;}
 /* ------------------------------------------- */
 
 *{
-  background-color: rgb(255, 255, 255);
   font-size: 20px;
-  color: rgb(40, 54, 55);
+  color: #BBE1FA;
 }

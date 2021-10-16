@@ -1,7 +1,6 @@
 .header{
     height: 100px;
-    color: red;
-    border: 1px solid #000;
+    color: #BBE1FA;
     display: flex;
     flex-direction: row;
     align-items: center;
