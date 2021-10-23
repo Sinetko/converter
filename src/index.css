@@ -1,7 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap');
+
 *{
   padding: 0;
   margin: 0;
   border: 0;
+  color: #BBE1FA;
+  font-family: 'Montserrat', sans-serif;
 }
 *,*:before,*:after{
   -moz-box-sizing: border-box;
@@ -26,6 +30,16 @@ html, body {
 input,button,textarea {font-family: inherit;}
 
 input::-ms-clear{display: none;}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 button{cursor: pointer;}
 button::-moz-focus-inner{padding: 0; border: 0;}
 a, a:visited{text-decoration: none;}
@@ -37,7 +51,3 @@ h1,h2,h3,h4,h5,h6 {font-size: inherit; font-weight: 400;}
 
 /* ------------------------------------------- */
 
-*{
-  font-size: 20px;
-  color: #BBE1FA;
-}

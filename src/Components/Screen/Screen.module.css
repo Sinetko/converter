@@ -10,3 +10,9 @@
     margin: 0 auto;
     background-color: #1B262C;
 }
+
+@media  screen and (max-height: 580px) {
+    .screen{
+        padding: 0 2%;
+    }
+  }

@@ -4,12 +4,16 @@ import style from './CurrencyTable.module.css'
 import { getCurrencyData } from '../../../redux/mainPage-reducer'
 
 const CurrencyTable = (props) => {
-
-    useEffect(() => {
-        props.getCurrencyData()
+    const currencyData = props.currencyData.reduce((acc, item) => {
+        return [
+            ...acc,
+            {
+                currency: `${item.base_ccy} / ${item.ccy}`,
+                buy: Math.floor(item.buy * 100) / 100,
+                sale: Math.floor(item.sale * 100) / 100,
+            }
+        ]
     }, [])
-
-    console.log(props.currencyData)
 
     return (
         <table className={style.currencyTable}>
@@ -18,7 +22,7 @@ const CurrencyTable = (props) => {
                 <th className={style.currencyTableItem}> Buy</th>
                 <th className={style.currencyTableItem}> Sell</th>
             </tr>
-            {props.currencyData.map((item) => {
+            {currencyData.map((item) => {
                 return <tr key={item.currency}  >
                     <td className={style.currencyTableItem}>{item.currency}</td>
                     <td className={style.currencyTableItem}>{item.buy}</td>
@@ -29,12 +33,6 @@ const CurrencyTable = (props) => {
 
     )
 }
-const mapStateToProps = (state) => {
-    return {
-        currencyData: state.mainPage.currencyData,
-    }
-}
 
-export default
-    connect(mapStateToProps, { getCurrencyData }
-    )(CurrencyTable);
+
+export default CurrencyTable;
