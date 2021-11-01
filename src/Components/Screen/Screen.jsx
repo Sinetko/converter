@@ -1,93 +1,97 @@
-import style from './Screen.module.css'
-import CurrencyTable from './CurrencyTable/CurrencyTable';
-import OperationsSection from './OperationsSection/OperationsSection';
-import { getCurrencyData } from '../../redux/mainPage-reducer'
-import { useEffect, useMemo } from 'react';
-import { connect } from 'react-redux';
+import style from "./Screen.module.css";
+import CurrencyTable from "./CurrencyTable/CurrencyTable";
+import OperationsSection from "./OperationsSection/OperationsSection";
+import { getCurrencyData } from "../../redux/mainPage-reducer";
+import { useEffect, useMemo } from "react";
+import { connect } from "react-redux";
 
-const Screen = (props) => {
+const Screen = ({getCurrencyData, ...props}) => {
+
+  useEffect(() => {
+    getCurrencyData();
+  }, [getCurrencyData]);
+
+  const currencyDataArray = useMemo(() => {
     
-    useEffect(() => {
-        props.getCurrencyData()
-    }, [])
+    const currencyData = props.currencyData.reduce((acc, item) => {
+      if (item.base_ccy === props.nationalCurrency) {
+        return [
+          ...acc,
+          {
+            ccy: item.ccy,
+            base_ccy: item.base_ccy,
+            buy: item.buy,
+            sale: item.sale,
+          },
+        ];
 
-    const currencyData = useMemo(()=>{
-        const tmp =[]
-        props.currencyData.forEach((item) => {
-            if(item.base_ccy !== props.nationalCurrency){
-                tmp.push({
-                    'ccy': item.ccy,
-                    'base_ccy': item.base_ccy,
-                    'buy': item.buy,
-                    'sale': item.sale,
-                    'doubleConvertation': false,
-                })
-                props.currencyData.forEach((item2)=>{
-                    if(item.base_ccy === item2.ccy && item2.base_ccy === props.nationalCurrency){
-                        tmp.push({
-                            'ccy': item.ccy,
-                            'base_ccy': item2.base_ccy,
-                            'buy': item.buy*item2.buy,
-                            'sale': item.sale*item2.sale,
-                        })
-                    }
-                })
-            }else{
-                tmp.push(item)
-            }
-            
-        })
-        return tmp
-    }, [props.currencyData])
+      } else {
+        const specialCurrencyData = props.currencyData.find((item2) => {
+          return (
+            item.base_ccy === item2.ccy &&
+            item2.base_ccy === props.nationalCurrency
+          );
+        });
 
-    // const currencyData = []
-    // props.currencyData.forEach((item) => {
-    //     if(item.base_ccy !== props.nationalCurrency){
-    //         currencyData.push({
-    //             'ccy': item.ccy,
-    //             'base_ccy': item.base_ccy,
-    //             'buy': item.buy,
-    //             'sale': item.sale,
-    //             'doubleConvertation': false,
-    //         })
-    //         props.currencyData.forEach((item2)=>{
-    //             if(item.base_ccy === item2.ccy && item2.base_ccy === props.nationalCurrency){
-    //                 currencyData.push({
-    //                     'ccy': item.ccy,
-    //                     'base_ccy': item2.base_ccy,
-    //                     'buy': item.buy*item2.buy,
-    //                     'sale': item.sale*item2.sale,
-    //                 })
-    //             }
-    //         })
-    //     }else{
-    //         currencyData.push(item)
-    //     }
-        
-    // })
+        if (specialCurrencyData) {
+          return [
+            ...acc,
+            {
+              ccy: item.ccy,
+              base_ccy: item.base_ccy,
+              buy: item.buy,
+              sale: item.sale,
+              doubleConvertation: false,
+            },
+            {
+              ccy: item.ccy,
+              base_ccy: specialCurrencyData.base_ccy,
+              buy: item.buy * specialCurrencyData.buy,
+              sale: item.sale * specialCurrencyData.sale,
+            },
+          ];
 
-    return (
-        <div className={style.screen} >
-            
-            <CurrencyTable 
-                currencyData={props.currencyData} 
-            />
-            <OperationsSection 
-                nationalCurrency={props.nationalCurrency}
-                currencyData={currencyData}  
-            />
-        </div>
-    )
-}
+        } else {
+          return [
+            ...acc,
+            {
+              ccy: item.ccy,
+              base_ccy: item.base_ccy,
+              buy: item.buy,
+              sale: item.sale,
+            },
+          ];
+        }
+      }
+    }, []);
+
+    return currencyData;
+  }, [props.currencyData, props.nationalCurrency]);
+
+  const currencyList = props.currencyData.map((el) => (
+    <option key={el.ccy} value={el.ccy}>
+      {el.ccy}
+    </option>
+  ));
+
+  return (
+    <div className={style.screen}>
+      <CurrencyTable currencyData={props.currencyData} />
+
+      <OperationsSection
+        nationalCurrency={props.nationalCurrency}
+        currencyData={currencyDataArray}
+        currencyList={currencyList}
+      />
+    </div>
+  );
+};
+
 const mapStateToProps = (state) => {
-    return {
-        currencyData: state.mainPage.currencyData,
-        nationalCurrency: state.mainPage.nationalCurrency,
-    }
-}
+  return {
+    currencyData: state.mainPage.currencyData,
+    nationalCurrency: state.mainPage.nationalCurrency,
+  };
+};
 
-export default
-connect(
-    mapStateToProps, 
-    { getCurrencyData }
-)(Screen);
+export default connect(mapStateToProps, { getCurrencyData })(Screen);
